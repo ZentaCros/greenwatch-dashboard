@@ -435,12 +435,16 @@
 
     function getBasemapLayer(city, year) {
         const key = `${city}_${year}`;
+        // Requesting @2x.webp tiles forces Mapbox to deliver double-resolution tiles,
+        // which makes Sentinel-2 satellite imagery significantly sharper.
         return L.tileLayer(
-            `https://api.mapbox.com/v4/${TILESET_IDS[key]}/{z}/{x}/{y}.png?access_token=${MAPBOX_TOKEN}`,
+            `https://api.mapbox.com/v4/${TILESET_IDS[key]}/{z}/{x}/{y}@2x.webp?access_token=${MAPBOX_TOKEN}`,
             {
                 attribution: 'Imagery © Sentinel-2 | Hosted via Mapbox',
-                tileSize: 256,
+                tileSize: 512,
+                zoomOffset: -1,
                 maxZoom: 18,
+                maxNativeZoom: 14,
                 bounds: getBounds(city)
             }
         );
