@@ -387,11 +387,15 @@
             lulc2018: "../results/pipeline/lahore/web_lahore_2018.png",
             lulc2026: "../results/pipeline/lahore/web_lahore_2026.png",
             defo:     "../results/pipeline/lahore/web_deforestation_lahore.png",
+            base2018: "../results/pipeline/lahore/web_basemap_lahore_2018.webp",
+            base2026: "../results/pipeline/lahore/web_basemap_lahore_2026.webp",
         },
         gujranwala: {
             lulc2018: "../results/pipeline/gujranwala/web_gujranwala_2018.png",
             lulc2026: "../results/pipeline/gujranwala/web_gujranwala_2026.png",
             defo:     "../results/pipeline/gujranwala/web_deforestation_gujranwala.png",
+            base2018: "../results/pipeline/gujranwala/web_basemap_gujranwala_2018.webp",
+            base2026: "../results/pipeline/gujranwala/web_basemap_gujranwala_2026.webp",
         }
     };
 
@@ -427,10 +431,6 @@
         mapLeft = L.map("map-left", { center, zoom: 11, zoomControl: false, attributionControl: false });
         mapRight = L.map("map-right", { center, zoom: 11, zoomControl: true, attributionControl: false });
 
-        const esriUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-        L.tileLayer(esriUrl, { maxZoom: 18 }).addTo(mapLeft);
-        L.tileLayer(esriUrl, { maxZoom: 18 }).addTo(mapRight);
-
         // Sync maps
         function syncMap(source, target) {
             source.on("move", () => {
@@ -454,6 +454,12 @@
         if (overlayLeft)  mapLeft.removeLayer(overlayLeft);
         if (overlayRight) mapRight.removeLayer(overlayRight);
         if (defoOverlay)  mapRight.removeLayer(defoOverlay);
+        if (basemapLeft)  mapLeft.removeLayer(basemapLeft);
+        if (basemapRight) mapRight.removeLayer(basemapRight);
+
+        // Basemaps (always 100% opacity, below LULC predictions)
+        basemapLeft = L.imageOverlay(paths.base2018, bounds, { opacity: 1.0 }).addTo(mapLeft);
+        basemapRight = L.imageOverlay(paths.base2026, bounds, { opacity: 1.0 }).addTo(mapRight);
 
         // Map opacity value
         const mapOpacity = document.getElementById("map-opacity-slider").value / 100;
