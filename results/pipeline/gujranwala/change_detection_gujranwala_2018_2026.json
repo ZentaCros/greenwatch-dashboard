@@ -1,0 +1,27 @@
+{
+  "Vegetation": {
+    "area_2018_km2": 629.31,
+    "area_2026_km2": 611.89,
+    "net_change_km2": -17.42
+  },
+  "Built-up": {
+    "area_2018_km2": 196.29,
+    "area_2026_km2": 234.67,
+    "net_change_km2": 38.38
+  },
+  "Cropland": {
+    "area_2018_km2": 1524.14,
+    "area_2026_km2": 1519.26,
+    "net_change_km2": -4.88
+  },
+  "Water": {
+    "area_2018_km2": 8.4,
+    "area_2026_km2": 6.82,
+    "net_change_km2": -1.58
+  },
+  "Barren/Other": {
+    "area_2018_km2": 32.29,
+    "area_2026_km2": 17.79,
+    "net_change_km2": -14.5
+  }
+}

@@ -1,0 +1,42 @@
+# ─── Data files (too large for GitHub) ───
+data/sentinel2/
+data/labels/
+data/validation/
+data/patches/
+
+# ─── Training outputs (generated on uni PC) ───
+checkpoints/
+results/*
+!results/pipeline/
+
+# Ignore heavy files inside pipeline
+results/pipeline/**/*.tif
+results/pipeline/**/*_basemap_*.png
+results/pipeline/**/lulc_*.png
+
+# ─── Python ───
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.venv/
+env/
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS ───
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# ─── Misc ───
+*.log
+*.tmp

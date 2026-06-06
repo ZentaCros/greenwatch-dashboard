@@ -1,0 +1,62 @@
+{
+  "unet": {
+    "Accuracy": 68.92,
+    "F1": 64.84,
+    "mIoU": 49.68,
+    "per_class_IoU": {
+      "Vegetation": 31.87,
+      "Built-up": 74.76,
+      "Cropland": 60.38,
+      "Water": 47.65,
+      "Barren/Other": 33.74
+    }
+  },
+  "segformer": {
+    "Accuracy": 68.83,
+    "F1": 64.83,
+    "mIoU": 49.72,
+    "per_class_IoU": {
+      "Vegetation": 31.38,
+      "Built-up": 74.53,
+      "Cropland": 60.49,
+      "Water": 49.21,
+      "Barren/Other": 32.99
+    }
+  },
+  "deeplabv3": {
+    "Accuracy": 69.05,
+    "F1": 65.24,
+    "mIoU": 50.14,
+    "per_class_IoU": {
+      "Vegetation": 31.47,
+      "Built-up": 74.81,
+      "Cropland": 60.6,
+      "Water": 49.97,
+      "Barren/Other": 33.88
+    }
+  },
+  "prithvi": {
+    "Accuracy": 70.66,
+    "F1": 66.71,
+    "mIoU": 51.66,
+    "per_class_IoU": {
+      "Vegetation": 34.64,
+      "Built-up": 77.21,
+      "Cropland": 61.58,
+      "Water": 47.86,
+      "Barren/Other": 37.02
+    }
+  },
+  "ensemble": {
+    "Accuracy": 70.37,
+    "F1": 66.51,
+    "mIoU": 51.47,
+    "per_class_IoU": {
+      "Vegetation": 33.77,
+      "Built-up": 76.74,
+      "Cropland": 61.49,
+      "Water": 49.01,
+      "Barren/Other": 36.33
+    }
+  }
+}
