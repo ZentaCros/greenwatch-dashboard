@@ -30,19 +30,6 @@ const OVERLAY_PATHS = {
     },
 };
 
-const BASEMAP_PATHS = {
-    lahore: {
-        "2018": "../results/pipeline/lahore/web_basemap_lahore_2018.webp",
-        "2021": "../results/pipeline/lahore/web_basemap_lahore_2018.webp",
-        "2026": "../results/pipeline/lahore/web_basemap_lahore_2026.webp",
-    },
-    gujranwala: {
-        "2018": "../results/pipeline/gujranwala/web_basemap_gujranwala_2018.webp",
-        "2021": "../results/pipeline/gujranwala/web_basemap_gujranwala_2018.webp",
-        "2026": "../results/pipeline/gujranwala/web_basemap_gujranwala_2026.webp",
-    },
-};
-
 // Change detection (Ensemble results from inference pipeline)
 const CHANGE_DATA = {
     lahore: {
@@ -110,9 +97,15 @@ function initMap() {
         attributionControl: false,
     });
 
+    // Dark satellite tile layer (ESRI High-Res)
+    baseTile = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { maxZoom: 18 }
+    ).addTo(map);
+
     // Add attribution
     L.control.attribution({ prefix: false, position: "bottomleft" })
-        .addAttribution('Imagery &copy; Sentinel-2 | LULC &copy; Prithvi v2')
+        .addAttribution('Imagery &copy; Esri | LULC &copy; Prithvi v2')
         .addTo(map);
 
     updateOverlay();
@@ -123,20 +116,11 @@ function updateOverlay() {
     const b = BOUNDS[currentCity];
     const bounds = [[b.south, b.west], [b.north, b.east]];
     const imgPath = OVERLAY_PATHS[currentCity][currentYear];
-    const baseImgPath = BASEMAP_PATHS[currentCity][currentYear] || BASEMAP_PATHS[currentCity]["2018"];
     const opacity = document.getElementById("opacity-slider").value / 100;
 
     if (overlay) {
         map.removeLayer(overlay);
     }
-    if (baseTile) {
-        map.removeLayer(baseTile);
-    }
-
-    baseTile = L.imageOverlay(baseImgPath, bounds, {
-        opacity: 1.0,
-        interactive: false,
-    }).addTo(map);
 
     overlay = L.imageOverlay(imgPath, bounds, {
         opacity,
@@ -202,6 +186,7 @@ function updateDonutChart() {
     document.getElementById("donut-year-label").textContent = currentYear;
 
     if (donutChart) donutChart.destroy();
+    Chart.register(ChartDataLabels);
 
     donutChart = new Chart(document.getElementById("donut-chart"), {
         type: "doughnut",
@@ -220,6 +205,17 @@ function updateDonutChart() {
             maintainAspectRatio: false,
             cutout: "60%",
             plugins: {
+                datalabels: {
+                    color: '#ffffff',
+                    font: { family: 'Inter', weight: 'bold', size: 12 },
+                    formatter: (value, ctx) => {
+                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = (value * 100 / total).toFixed(1);
+                        return percentage >= 5 ? percentage + "%" : ""; // Only show if >= 5% to avoid clutter
+                    },
+                    textStrokeColor: 'rgba(0,0,0,0.8)',
+                    textStrokeWidth: 3
+                },
                 legend: {
                     position: "bottom",
                     labels: {
