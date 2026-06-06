@@ -13,6 +13,7 @@ results/*
 results/pipeline/**/*.tif
 results/pipeline/**/*_basemap_*.png
 results/pipeline/**/lulc_*.png
+!results/pipeline/**/*.webp
 
 # ─── Python ───
 __pycache__/
