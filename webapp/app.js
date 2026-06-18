@@ -64,18 +64,18 @@ const CHANGE_DATA = {
 // ESA 2021 validation metrics (from evaluation JSONs)
 const MODEL_METRICS = {
     lahore: {
-        "U-Net (B4)":    { acc: 72.74, f1: 66.54, miou: 51.66 },
-        "SegFormer":     { acc: 72.60, f1: 66.50, miou: 51.66 },
-        "DeepLabV3+":    { acc: 72.80, f1: 66.98, miou: 52.17 },
-        "Prithvi v2":    { acc: 74.44, f1: 68.37, miou: 53.64 },
-        "Ensemble":      { acc: 74.27, f1: 68.32, miou: 53.60 },
+        "U-Net (B4)":    { acc: 68.92, f1: 64.84, miou: 49.68 },
+        "SegFormer":     { acc: 68.83, f1: 64.83, miou: 49.72 },
+        "DeepLabV3+":    { acc: 69.05, f1: 65.24, miou: 50.14 },
+        "Prithvi v2":    { acc: 70.66, f1: 66.71, miou: 51.66 },
+        "Ensemble":      { acc: 70.37, f1: 66.51, miou: 51.47 },
     },
     gujranwala: {
-        "U-Net (B4)":    { acc: 75.82, f1: 59.06, miou: 44.98 },
-        "SegFormer":     { acc: 75.85, f1: 59.36, miou: 45.31 },
-        "DeepLabV3+":    { acc: 75.85, f1: 58.35, miou: 44.56 },
-        "Prithvi v2":    { acc: 76.49, f1: 60.94, miou: 46.90 },
-        "Ensemble":      { acc: 76.57, f1: 60.93, miou: 46.87 },
+        "U-Net (B4)":    { acc: 74.78, f1: 58.90, miou: 44.75 },
+        "SegFormer":     { acc: 74.84, f1: 59.26, miou: 45.14 },
+        "DeepLabV3+":    { acc: 74.82, f1: 58.18, miou: 44.34 },
+        "Prithvi v2":    { acc: 75.45, f1: 60.69, miou: 46.60 },
+        "Ensemble":      { acc: 75.48, f1: 60.65, miou: 46.52 },
     },
 };
 
