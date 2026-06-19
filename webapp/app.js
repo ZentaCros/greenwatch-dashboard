@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    LULC DASHBOARD — APPLICATION LOGIC
-   All data is pre-loaded. Zero network requests during interaction.
+   v2: Image preloading, progress bar, auto-retry, memory cleanup
    ═══════════════════════════════════════════════════════════════ */
 
 // ─── DATA ──────────────────────────────────────────────────────
@@ -97,6 +97,132 @@ let donutChart = null;
 let barChart   = null;
 
 
+// ─── IMAGE CACHE & PRELOADER ───────────────────────────────────
+
+const imageCache = {};  // url -> HTMLImageElement (persists across city/year switches)
+
+/**
+ * Load a single image with auto-retry on failure.
+ * Returns a Promise that resolves with the cached Image element.
+ * Retries up to maxRetries times with exponential backoff.
+ */
+function loadImageWithRetry(url, maxRetries = 5) {
+    // Return cached image immediately if already loaded
+    if (imageCache[url] && imageCache[url].complete && imageCache[url].naturalWidth > 0) {
+        return Promise.resolve(imageCache[url]);
+    }
+
+    return new Promise((resolve) => {
+        let attempt = 0;
+
+        function tryLoad() {
+            attempt++;
+            const img = new Image();
+
+            img.onload = () => {
+                imageCache[url] = img;
+                resolve(img);
+            };
+
+            img.onerror = () => {
+                if (attempt < maxRetries) {
+                    const delay = Math.min(1000 * Math.pow(2, attempt - 1), 8000); // 1s, 2s, 4s, 8s, 8s
+                    updateLoaderStatus(`Retrying ${getFileName(url)}... (attempt ${attempt + 1})`);
+                    setTimeout(tryLoad, delay);
+                } else {
+                    // After all retries, resolve anyway to not block the app
+                    console.warn(`Failed to load after ${maxRetries} attempts: ${url}`);
+                    imageCache[url] = img; // store even failed so we don't re-block
+                    resolve(img);
+                }
+            };
+
+            // Cache-bust on retries to avoid stale cached errors
+            img.src = attempt > 1 ? `${url}?retry=${attempt}` : url;
+        }
+
+        tryLoad();
+    });
+}
+
+/**
+ * Extract file name from URL for status display
+ */
+function getFileName(url) {
+    return url.split("/").pop().split("?")[0];
+}
+
+/**
+ * Update the loading overlay progress bar and status text
+ */
+function updateLoaderProgress(loaded, total) {
+    const pct = Math.round((loaded / total) * 100);
+    const fill = document.getElementById("progress-fill");
+    const status = document.getElementById("loader-status");
+    if (fill) fill.style.width = pct + "%";
+    if (status) status.textContent = `Loading imagery... ${loaded} of ${total} (${pct}%)`;
+}
+
+function updateLoaderStatus(text) {
+    const status = document.getElementById("loader-status");
+    if (status) status.textContent = text;
+}
+
+/**
+ * Collect all unique image URLs that the dashboard needs
+ */
+function getAllImageUrls() {
+    const urls = new Set();
+    for (const city of Object.keys(OVERLAY_PATHS)) {
+        for (const year of Object.keys(OVERLAY_PATHS[city])) {
+            urls.add(OVERLAY_PATHS[city][year]);
+        }
+    }
+    for (const city of Object.keys(BASEMAP_PATHS)) {
+        for (const year of Object.keys(BASEMAP_PATHS[city])) {
+            urls.add(BASEMAP_PATHS[city][year]);
+        }
+    }
+    return Array.from(urls);
+}
+
+/**
+ * Preload all images with real progress tracking.
+ * Returns a Promise that resolves when all images are loaded.
+ */
+async function preloadAllImages() {
+    const urls = getAllImageUrls();
+    const total = urls.length;
+    let loaded = 0;
+
+    updateLoaderProgress(0, total);
+
+    const promises = urls.map(url =>
+        loadImageWithRetry(url).then(() => {
+            loaded++;
+            updateLoaderProgress(loaded, total);
+        })
+    );
+
+    await Promise.all(promises);
+
+    // Final status
+    updateLoaderStatus("Ready!");
+}
+
+/**
+ * Dismiss the loading overlay with a smooth fade
+ */
+function hideLoader() {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) {
+        overlay.classList.add("hidden");
+        // Remove from DOM after animation completes to free memory
+        setTimeout(() => overlay.remove(), 700);
+    }
+}
+
+
 // ─── MAP INIT ──────────────────────────────────────────────────
 
 function initMap() {
@@ -126,11 +252,14 @@ function updateOverlay() {
     const baseImgPath = BASEMAP_PATHS[currentCity][currentYear] || BASEMAP_PATHS[currentCity]["2018"];
     const opacity = document.getElementById("opacity-slider").value / 100;
 
+    // Properly remove old layers to free memory
     if (overlay) {
         map.removeLayer(overlay);
+        overlay = null;
     }
     if (baseTile) {
         map.removeLayer(baseTile);
+        baseTile = null;
     }
 
     baseTile = L.imageOverlay(baseImgPath, bounds, {
@@ -408,11 +537,18 @@ function refreshAll() {
 
 // ─── INIT ──────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // Phase 1: Preload all images with progress
+    await preloadAllImages();
+
+    // Phase 2: Initialize the dashboard (instant since images are cached)
     initMap();
     setupListeners();
     updateStats();
     updateDonutChart();
     updateBarChart();
     updateModelInfo();
+
+    // Phase 3: Fade out the loader
+    hideLoader();
 });
