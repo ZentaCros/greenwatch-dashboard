@@ -486,26 +486,139 @@ body {
     margin: 0;
 }
 
-/* --- MOBILE RESPONSIVENESS --- */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS (max-width: 768px)
+   Covers: index.html (dashboard) + comparison.html
+   ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    #app { flex-direction: column; height: auto; overflow-y: visible; }
-    #sidebar { width: 100%; min-width: 100%; height: auto; border-left: none; border-top: 1px solid var(--border); padding-bottom: 40px; }
-    #map-container { width: 100%; height: 50vh; min-height: 350px; }
-    #map-controls { bottom: 12px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 8px; padding: 10px; }
-    .map-control-group { justify-content: space-between; }
-    .map-control-group input[type=range] { width: 60%; }
-    #map-legend { top: 12px; bottom: auto; right: 12px; padding: 10px; background: rgba(15, 23, 50, 0.7); }
-    .legend-item { font-size: 10px; margin-bottom: 3px; }
+
+    /* ── Base: enable scrolling ── */
+    body {
+        overflow-y: auto;
+        height: auto;
+    }
+
+    /* ── Nav ── */
+    #topnav {
+        height: 48px;
+        padding: 0 12px;
+    }
     .nav-left .nav-title h1 { font-size: 13px; }
     .nav-left .nav-subtitle { display: none; }
-    .stats-grid { grid-template-columns: 1fr; }
-}
+    .logo-icon { width: 28px; height: 28px; }
+    .nav-badge { display: none; }
 
-@media (max-width: 768px) {
-    #controls-bar { flex-direction: column; gap: 12px; padding: 12px; }
-    #maps-row { flex-direction: column; }
-    .map-panel { height: 50vh; min-height: 350px; flex: none; }
-    .map-panel:first-child { border-right: none; border-bottom: 2px solid var(--accent); }
-    .nav-badge { display: none; } /* Hide badges but keep deforestation link */
+    /* ── Dashboard layout (index.html) ── */
+    #app {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 48px);
+    }
+
+    #map-container {
+        width: 100%;
+        height: 55vh;
+        min-height: 320px;
+        flex: none;
+    }
+
+    #sidebar {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-bottom: 40px;
+        overflow-y: visible;
+    }
+
+    /* ── Map controls ── */
+    #map-controls {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 8px 12px;
+    }
+    .map-control-group { justify-content: space-between; }
+    .map-control-group input[type=range] { width: 55%; }
+
+    /* ── Map legend ── */
+    #map-legend {
+        top: 10px;
+        bottom: auto;
+        right: 10px;
+        padding: 8px 10px;
+        background: rgba(15, 23, 50, 0.8);
+    }
+    .legend-item { font-size: 10px; margin-bottom: 2px; }
+
+    /* ── Sidebar cards ── */
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: 14px; }
+
+    /* ── Comparison page (comparison.html) ── */
+    #controls-bar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 12px;
+        align-items: stretch;
+    }
+    #controls-bar .control-label {
+        text-align: center;
+        margin-left: 0 !important;
+    }
+    #controls-bar .toggle-group {
+        width: 100%;
+        justify-content: center;
+    }
+    #controls-bar input[type=range] {
+        width: 100% !important;
+    }
+
+    /* Stack maps vertically */
+    #maps-row {
+        flex-direction: column;
+        flex: none;
+    }
+    .map-panel {
+        height: 40vh;
+        min-height: 280px;
+        flex: none;
+    }
+    .map-panel:first-child {
+        border-right: none;
+        border-bottom: 2px solid var(--accent);
+    }
+
+    /* Hide the VS divider on mobile */
+    #divider-label { display: none; }
+
+    /* Deforestation legend */
+    #defo-legend {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 10px;
+    }
+    #defo-legend h4 { font-size: 9px; margin-bottom: 4px; }
+    .defo-legend-item { font-size: 10px; margin-bottom: 2px; }
+    .defo-legend-color { width: 10px; height: 10px; }
+
+    /* Stats bar: horizontal scroll on mobile */
+    #stats-bar {
+        flex-direction: row;
+        height: auto;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+    .stats-section {
+        flex: none;
+        min-width: 140px;
+        padding: 12px 16px;
+        scroll-snap-align: start;
+    }
+    .stats-section .big-number { font-size: 22px; }
+    .stats-section .stats-label { font-size: 9px; }
+    .stats-section .stats-detail { font-size: 9px; }
 }
 
