@@ -61,7 +61,7 @@ const CHANGE_DATA = {
     },
 };
 
-// ESA 2021 validation metrics (from evaluation JSONs)
+// Full-city evaluation metrics (from pipeline evaluation JSONs, best seed)
 const MODEL_METRICS = {
     lahore: {
         "U-Net (B4)":    { acc: 68.92, f1: 64.84, miou: 49.68 },
@@ -78,6 +78,22 @@ const MODEL_METRICS = {
         "Ensemble":      { acc: 75.48, f1: 60.65, miou: 46.52 },
     },
 };
+
+// Patch-level metrics (mean ± std over 3 seeds: 42, 123, 7)
+const PATCH_METRICS = {
+    "U-Net (B4)":    { miou: 59.16, std: 0.07, oa: 81.18, oa_std: 0.09 },
+    "MiT-B2+FPN":    { miou: 59.07, std: 0.07, oa: 80.61, oa_std: 0.12 },
+    "DeepLabV3+":    { miou: 59.05, std: 0.17, oa: 80.81, oa_std: 0.06 },
+    "Prithvi v2":    { miou: 61.19, std: 0.25, oa: 82.75, oa_std: 0.24 },
+};
+
+// LoRA rank ablation (seed 42, 8 unfrozen blocks)
+const LORA_ABLATION = [
+    { rank:  8, trainable: "106.7M", pct: 34.6, miou: 60.40, oa: 82.07 },
+    { rank: 16, trainable: "109.6M", pct: 35.2, miou: 60.67, oa: 82.63 },
+    { rank: 32, trainable: "115.4M", pct: 36.4, miou: 61.12, oa: 82.62 },
+    { rank: 64, trainable: "121.4M", pct: 37.6, miou: 61.19, oa: 82.70 },
+];
 
 const CLASS_COLORS = {
     "Vegetation":   "#22c55e",
@@ -474,14 +490,15 @@ function updateModelInfo() {
     const metrics = MODEL_METRICS[currentCity];
     const container = document.getElementById("model-info");
 
-    // Find best mIoU
+    // Full-city metrics
     let bestMiou = 0;
     let bestName = "";
     for (const [name, m] of Object.entries(metrics)) {
         if (m.miou > bestMiou) { bestMiou = m.miou; bestName = name; }
     }
 
-    container.innerHTML = Object.entries(metrics).map(([name, m]) => {
+    let html = `<div class="model-section-label">Full-City (${currentCity === "lahore" ? "Lahore" : "Gujranwala"})</div>`;
+    html += Object.entries(metrics).map(([name, m]) => {
         const isBest = name === bestName;
         return `
             <div class="model-row ${isBest ? 'best' : ''}">
@@ -490,6 +507,37 @@ function updateModelInfo() {
             </div>
         `;
     }).join("");
+
+    // Patch-level metrics (mean ± std)
+    html += `<div class="model-section-label" style="margin-top:12px;">Patch-Level (mean ± std, 3 seeds)</div>`;
+    let bestPatch = 0;
+    let bestPatchName = "";
+    for (const [name, m] of Object.entries(PATCH_METRICS)) {
+        if (m.miou > bestPatch) { bestPatch = m.miou; bestPatchName = name; }
+    }
+    html += Object.entries(PATCH_METRICS).map(([name, m]) => {
+        const isBest = name === bestPatchName;
+        return `
+            <div class="model-row ${isBest ? 'best' : ''}">
+                <span class="model-name">${name}</span>
+                <span class="model-metric ${isBest ? 'best-val' : ''}">${m.miou.toFixed(2)}±${m.std.toFixed(2)}%</span>
+            </div>
+        `;
+    }).join("");
+
+    // LoRA ablation
+    html += `<div class="model-section-label" style="margin-top:12px;">LoRA Rank Ablation</div>`;
+    LORA_ABLATION.forEach(r => {
+        const isBest = r.rank === 64;
+        html += `
+            <div class="model-row ${isBest ? 'best' : ''}">
+                <span class="model-name">r=${r.rank} <span style="opacity:0.5;font-size:10px">(${r.trainable})</span></span>
+                <span class="model-metric ${isBest ? 'best-val' : ''}">${r.miou.toFixed(2)}% mIoU</span>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
 }
 
 

@@ -409,6 +409,17 @@ body {
     color: var(--green);
 }
 
+.model-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 0 2px 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: -2px;
+}
+
 /* ─── ANIMATIONS ─── */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
