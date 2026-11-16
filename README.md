@@ -23,7 +23,7 @@ An interactive web dashboard that visualizes land use/land cover (LULC) maps and
 - **Change detection stats** - built-up expansion, vegetation loss, area comparisons
 - **Donut & bar charts** - land use distribution and area comparison across years
 - **Model performance panel** - full-city metrics, patch-level metrics, LoRA ablation results
-- **Deforestation analysis** - side-by-side 2018 vs 2026 comparison with vegetation loss highlighting
+- **Vegetation change** - side-by-side 2018 vs 2026 comparison showing what 2018 vegetation became by 2026
 - **Opacity controls** - adjust overlay transparency for satellite basemap inspection
 
 ### LULC Classes
@@ -54,7 +54,7 @@ This dashboard is part of a larger research project benchmarking foundation mode
 
 **[prithvi-lulc-punjab](https://github.com/ZentaCros/prithvi-lulc-punjab)** - Training code, evaluation scripts, and full results
 
-Paper: *"Benchmarking a LoRA-Adapted EO Foundation Model for Land Cover Mapping and Zero-Shot Cross-City Generalization in Punjab, Pakistan"* (under review at MDPI Remote Sensing)
+Paper: *"Parameter-Efficient Adaptation of an Earth Observation Foundation Model for Land Cover Mapping: Hybrid LoRA Fine-Tuning Evaluated on Sentinel-2 Imagery in Punjab, Pakistan"* (manuscript)
 
 ---
 
