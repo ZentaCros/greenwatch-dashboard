@@ -61,3 +61,5 @@ Paper: *"Parameter-Efficient Adaptation of an Earth Observation Foundation Model
 ## License
 
 MIT
+
+Author: Muhammad Hamza Azeem ([@ZentaCros](https://github.com/ZentaCros))
